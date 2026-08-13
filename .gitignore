@@ -1,0 +1,11 @@
+*.docx
+*.pdf
+*.tex
+*.txt
+raw/
+private/
+extracted-text/
+.DS_Store
+.env
+__pycache__/
+

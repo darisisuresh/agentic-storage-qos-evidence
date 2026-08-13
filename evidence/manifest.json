@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "audit_date": "2026-08-12",
+  "manuscript": {
+    "filename_committed": false,
+    "content_committed": false,
+    "sha256_original": "0b0952d4a25c2dc7c893bef91acd1521835bb2cf4f5342a1bcb71cf24db49c66",
+    "format": "Microsoft OOXML DOCX",
+    "size_bytes": 309545
+  },
+  "aegis": {
+    "version": "2.4.0",
+    "source_commit": "dfd6d15bb7adf6ca0e23ec70ac3dadaa2ae5304e",
+    "upstream_tests": "129 passed",
+    "plagiarism_assessment": "INCONCLUSIVE_NO_CORPUS",
+    "ai_assessment": "UNAVAILABLE_RUNTIME_TERMINATION",
+    "watermark_assessment": "UNAVAILABLE_RUNTIME_TERMINATION"
+  },
+  "privacy": {
+    "document_body_transmitted": false,
+    "raw_report_public": false,
+    "author_email_public": false
+  }
+}
+
