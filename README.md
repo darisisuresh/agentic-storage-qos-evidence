@@ -3,7 +3,7 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-73e0ba)](https://darisisuresh.github.io/agentic-storage-qos-evidence/)
 [![AEGIS](https://img.shields.io/badge/AEGIS-2.4.0-ff6b3d)](https://github.com/sunilgentyala/aegis-integrity)
 [![Privacy](https://img.shields.io/badge/manuscript-private-071b1c)](#privacy-controls)
-[![Tests](https://img.shields.io/badge/tests-129%20passed-73e0ba)](reports/aegis-integrity-report.html)
+![Tests](https://img.shields.io/badge/tests-129%20passed-73e0ba)
 
 This repository contains sanitized, reproducible evidence supporting an IEEE-style manuscript about predictive, safety-constrained storage QoS optimization.
 
