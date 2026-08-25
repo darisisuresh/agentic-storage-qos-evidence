@@ -3,7 +3,7 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-73e0ba)](https://darisisuresh.github.io/agentic-storage-qos-evidence/)
 [![AEGIS](https://img.shields.io/badge/AEGIS-2.4.0-ff6b3d)](https://github.com/sunilgentyala/aegis-integrity)
 [![Privacy](https://img.shields.io/badge/manuscript-private-071b1c)](#privacy-controls)
-![Framework tests](https://img.shields.io/badge/framework%20tests-8%20passed-73e0ba)
+![Framework tests](https://img.shields.io/badge/framework%20tests-11%20passed-73e0ba)
 ![Validation](https://img.shields.io/badge/validation-100%20seeds-73e0ba)
 
 This repository contains sanitized, reproducible evidence supporting an IEEE-style manuscript about predictive, safety-constrained storage QoS optimization.
@@ -16,9 +16,9 @@ The manuscript and extracted text are intentionally excluded. Public artifacts c
 - AEGIS Integrity: v2.4.0, source commit `dfd6d15bb7adf6ca0e23ec70ac3dadaa2ae5304e`.
 - Tool validation: 133 upstream tests passed with AEGIS v2.4.0 at source commit `dfd6d15bb7adf6ca0e23ec70ac3dadaa2ae5304e`.
 - Plagiarism: inconclusive because no independent comparison corpus was supplied.
-- AI analysis: probabilistic score 0.13; this is a supporting signal, not proof of authorship.
+- AI analysis: probabilistic score 0.138; this is a supporting signal, not proof of authorship.
 - Watermark analysis: experimental `NO_STATISTICAL_ANOMALY`; it did not affect overall risk.
-- Citation assessment: inconclusive despite verifying 11 of 15 references (73.3% coverage); one DOI lookup was rate-limited and three references have no DOI.
+- Citation assessment: inconclusive despite verifying 10 of 15 references (66.7% coverage); two DOI lookups were rate-limited and three references have no DOI. No reference was flagged.
 - Formatting: US Letter; one-column title/abstract; two-column main body; duplex mirrored margins enabled in the proofread copy.
 
 Explore the public evidence experience at **[darisisuresh.github.io/agentic-storage-qos-evidence](https://darisisuresh.github.io/agentic-storage-qos-evidence/)**.
@@ -39,8 +39,11 @@ PAQO keeps learned recommendation separate from execution authority. The public 
 | Mean P99 latency | 29.47% lower | Predictive vs. static QoS; nominal scenario, 100 paired seeds |
 | P99 SLO violations | 93.87% fewer | Predictive vs. static QoS; nominal scenario, 100 paired seeds |
 | Mean queue depth | 89.76% lower | Predictive vs. static QoS; nominal scenario, 100 paired seeds |
-| Decision time | 19.50 μs | Mean predictive software decision time; excludes array actuation |
-| Framework tests | 8 passed | Unit and benchmark reproducibility checks |
+| Predictive vs. MPC P99 | 7.85% lower | Lightweight forecast controller vs. implemented linear-horizon MPC |
+| Unsafe proposals | 684/684 blocked | Deterministic mocked fault injection |
+| Injected rollbacks | 200/200 issued | Mocked runner; not a production rollback rate |
+| Decision time | 19.79 μs | Mean predictive software decision time; excludes array actuation |
+| Framework tests | 11 passed | Unit, rollback, safety, and benchmark reproducibility checks |
 | AEGIS upstream tests | 133 passed | Tool suite validated locally |
 | Public manuscript files | 0 | Privacy control enforced |
 
@@ -52,9 +55,10 @@ All performance values are from a transparent synthetic queueing model, not a pr
 python -m pip install -e '.[dev,validation]'
 pytest -q
 python benchmarks/run_validation.py --seeds 100
+python benchmarks/run_safety_validation.py
 ```
 
-The run writes per-seed observations and an aggregate statistical report to `evidence/results/`. The committed report includes two-sided 95% t confidence intervals, paired one-sided Wilcoxon tests, Cohen's dz, three stress levels, and a no-forecast ablation. On the recorded test host, all 1,200 controller-scenario runs completed in 19.12 seconds.
+The runs write per-seed observations and aggregate reports to `evidence/results/`. The performance report includes two-sided 95% t confidence intervals, paired one-sided Wilcoxon tests, Cohen's dz, an MPC baseline, a no-forecast ablation, three stress levels, and three 15% platform-demand shifts. On the recorded test host, all 3,000 controller-scenario runs completed in 54.04 seconds. The fault-injection report uses mocked runners and must not be interpreted as production-array safety or rollback evidence.
 
 ## Privacy controls
 

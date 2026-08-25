@@ -4,19 +4,27 @@
   "manuscript": {
     "filename_committed": false,
     "content_committed": false,
-    "sha256_original": "7f9089a2245b791432b01b2fd82d8a81d7ed6f2feefb352f584911e7baa539e7",
+    "sha256_original": "9f81eac2c874881acdff7483222e2d94671d2f0e87f28005067028eaf10c449d",
     "format": "Microsoft OOXML DOCX",
-    "size_bytes": 333622
+    "size_bytes": 167662,
+    "identity_role": "ICOSICS_972_CAMERA_READY_FINAL"
   },
   "performance_validation": {
     "independent_seeds": 100,
-    "scenarios": ["mild", "nominal", "severe"],
-    "controller_variants": 4,
+    "scenarios": ["mild", "nominal", "severe", "transfer_vmware", "transfer_hyperv", "transfer_kubernetes"],
+    "controller_variants": 5,
     "intervals_per_seed": 720,
-    "framework_tests": "8 passed",
+    "framework_tests": "11 passed",
     "nominal_predictive_vs_static_p99_reduction_pct": 29.47,
     "nominal_predictive_vs_static_violation_reduction_pct": 93.87,
     "nominal_predictive_vs_static_queue_reduction_pct": 89.76,
+    "nominal_predictive_vs_mpc_p99_reduction_pct": 7.85,
+    "safety_fault_injection": {
+      "unsafe_proposals_blocked": "684/684",
+      "valid_proposals_accepted": "316/316",
+      "injected_rollbacks_issued": "200/200",
+      "boundary": "MOCKED_RUNNER_NOT_PRODUCTION_INFRASTRUCTURE"
+    },
     "boundary": "SYNTHETIC_MODEL_NOT_PRODUCTION_ARRAY"
   },
   "aegis": {
@@ -26,9 +34,9 @@
     "scan_date": "2026-08-24",
     "overall_risk": "LOW",
     "plagiarism_assessment": "INCONCLUSIVE_NO_CORPUS",
-    "ai_assessment": "PROBABILISTIC_SCORE_0.133",
+    "ai_assessment": "PROBABILISTIC_SCORE_0.138",
     "watermark_assessment": "EXPERIMENTAL_NO_STATISTICAL_ANOMALY_NON_RISK_BEARING",
-    "citation_assessment": "INCONCLUSIVE_11_OF_15_VERIFIED_ONE_RATE_LIMITED_THREE_NO_DOI"
+    "citation_assessment": "INCONCLUSIVE_10_OF_15_VERIFIED_TWO_RATE_LIMITED_THREE_NO_DOI_ZERO_FLAGGED"
   },
   "privacy": {
     "document_body_transmitted": false,

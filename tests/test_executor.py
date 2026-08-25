@@ -56,3 +56,60 @@ def test_executor_rejects_low_confidence() -> None:
     result = executor.execute(action, vmware_snapshot())
     assert not result.accepted
     assert "confidence" in result.message.lower()
+
+
+def test_post_action_failure_executes_rollback() -> None:
+    commands = []
+
+    def runner(command: str, timeout: float):
+        commands.append(command)
+        return 0, "ok", ""
+
+    executor = ActionExecutor(
+        SafetyPolicy(cooldown_seconds=0),
+        ExecutorConfig(dry_run=False, verify_after_execution=True),
+        command_runner=runner,
+        state_verifier=lambda action, snapshot, plan: False,
+    )
+    result = executor.execute(
+        QoSAction(
+            action_type=ActionType.INCREASE_IOPS_LIMIT,
+            platform=Platform.VMWARE,
+            resource_id="vm-db-01",
+            magnitude=1000,
+            confidence=0.95,
+        ),
+        vmware_snapshot(),
+    )
+    assert result.executed
+    assert result.metadata["rollback_executed"] is True
+    assert len(commands) == 2
+    assert "IopsLimit 10000" in commands[1]
+
+
+def test_failed_rollback_raises() -> None:
+    calls = 0
+
+    def runner(command: str, timeout: float):
+        nonlocal calls
+        calls += 1
+        return (0, "ok", "") if calls == 1 else (7, "", "rollback error")
+
+    executor = ActionExecutor(
+        SafetyPolicy(cooldown_seconds=0),
+        ExecutorConfig(dry_run=False, verify_after_execution=True),
+        command_runner=runner,
+        state_verifier=lambda action, snapshot, plan: False,
+    )
+    import pytest
+    with pytest.raises(Exception, match="rollback failed"):
+        executor.execute(
+            QoSAction(
+                action_type=ActionType.INCREASE_IOPS_LIMIT,
+                platform=Platform.VMWARE,
+                resource_id="vm-db-01",
+                magnitude=1000,
+                confidence=0.95,
+            ),
+            vmware_snapshot(),
+        )

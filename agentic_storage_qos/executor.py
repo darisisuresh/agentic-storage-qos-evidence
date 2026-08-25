@@ -60,10 +60,13 @@ class ActionExecutor:
         safety_policy: SafetyPolicy | None = None,
         config: ExecutorConfig | None = None,
         command_runner: Callable[[str, float], tuple[int, str, str]] | None = None,
+        state_verifier: Callable[[QoSAction, MetricsSnapshot, ExecutionPlan], bool]
+        | None = None,
     ) -> None:
         self.safety_policy = safety_policy or SafetyPolicy()
         self.config = config or ExecutorConfig()
         self._command_runner = command_runner
+        self._state_verifier = state_verifier
         self._last_execution: dict[tuple[Platform, str], datetime] = {}
         self._lock = threading.Lock()
 
@@ -128,6 +131,25 @@ class ActionExecutor:
                 f"platform command failed with exit code {code}: {stderr.strip()}"
             )
 
+        rollback_executed = False
+        rollback_stdout = ""
+        if self.config.verify_after_execution and self._state_verifier is not None:
+            if not self._state_verifier(action, snapshot, plan):
+                if not plan.rollback_command:
+                    raise ExecutionError(
+                        "post-action verification failed and no rollback is available"
+                    )
+                rollback_code, rollback_stdout, rollback_stderr = self._command_runner(
+                    plan.rollback_command,
+                    self.config.command_timeout_seconds,
+                )
+                if rollback_code != 0:
+                    raise ExecutionError(
+                        "post-action verification failed and rollback failed with "
+                        f"exit code {rollback_code}: {rollback_stderr.strip()}"
+                    )
+                rollback_executed = True
+
         self._mark_execution(action)
         return ActionResult(
             action_id=action.action_id,
@@ -137,12 +159,19 @@ class ActionExecutor:
             resource_id=action.resource_id,
             command=plan.command,
             rollback_command=plan.rollback_command,
-            message="Command executed successfully",
+            message=(
+                "Post-action verification failed; rollback executed successfully"
+                if rollback_executed
+                else "Command executed and verified successfully"
+            ),
             completed_at=datetime.now(timezone.utc),
             metadata={
                 "stdout": stdout,
                 "stderr": stderr,
                 "new_iops_limit": plan.new_iops_limit,
+                "verification_passed": not rollback_executed,
+                "rollback_executed": rollback_executed,
+                "rollback_stdout": rollback_stdout,
             },
         )
 

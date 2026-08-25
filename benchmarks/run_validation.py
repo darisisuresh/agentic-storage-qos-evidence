@@ -40,11 +40,15 @@ class RunResult:
     decision_us: float
 
 
-def workload(seed: int, severity: float, intervals: int = 720) -> tuple[np.ndarray, np.ndarray]:
+def workload(seed: int, severity: float, intervals: int = 720,
+             platform_shift: str | None = None) -> tuple[np.ndarray, np.ndarray]:
     rng = np.random.default_rng(seed)
     t = np.arange(intervals)
     demand = BASE * (1 + 0.08 * np.sin(2 * np.pi * t[:, None] / np.array([180, 150, 210, 170])))
     demand += rng.normal(0, BASE * 0.035, size=(intervals, 4))
+    shift_map = {"vmware": [0], "hyperv": [1], "kubernetes": [2, 3]}
+    if platform_shift:
+        demand[:, shift_map[platform_shift]] *= 1.15
     widths = [10, 18, 24, 12]
     counts = [4, 3, 4, 4]
     amps = np.array([0.80, 0.58, 0.72, 0.68]) * severity
@@ -84,6 +88,14 @@ def decide(name: str, history: np.ndarray, limits: np.ndarray, p99: np.ndarray,
         allocation_signal = history[t]
         trigger = bool(np.any(history[t] / np.maximum(limits, 1) > 0.98))
         hold = 4
+    elif name == "mpc":
+        recent = history[max(0, t - 16):t + 1]
+        slope = (recent[-1] - recent[0]) / max(len(recent) - 1, 1)
+        horizons = np.arange(1, 9)[:, None]
+        forecast = np.maximum(recent[-1] + horizons * slope, 100.0)
+        allocation_signal = np.quantile(forecast, 0.90, axis=0)
+        trigger = bool(np.any(allocation_signal / np.maximum(limits, 1) > 0.93))
+        hold = 6
     else:
         raise ValueError(name)
     if not trigger or not np.any(eligible):
@@ -101,8 +113,9 @@ def decide(name: str, history: np.ndarray, limits: np.ndarray, p99: np.ndarray,
     return limits, 1
 
 
-def simulate(seed: int, controller: str, scenario: str, severity: float) -> RunResult:
-    demand, capacity = workload(seed, severity)
+def simulate(seed: int, controller: str, scenario: str, severity: float,
+             platform_shift: str | None = None) -> RunResult:
+    demand, capacity = workload(seed, severity, platform_shift=platform_shift)
     queue = np.zeros(4)
     limits = STATIC_LIMIT.copy()
     cooldown = np.zeros(4)
@@ -151,7 +164,7 @@ def summarize(rows: list[RunResult]) -> dict:
             out[scenario][controller] = metrics
     base = {(r.seed, r.scenario): r for r in rows if r.controller == "static"}
     paired = {}
-    for controller in ("reactive", "predictive", "predictive_no_forecast"):
+    for controller in ("reactive", "predictive", "predictive_no_forecast", "mpc"):
         group = [r for r in rows if r.scenario == "nominal" and r.controller == controller]
         if not group:
             continue
@@ -177,13 +190,20 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=Path("evidence/results"))
     args = parser.parse_args()
     rows = []
-    scenarios = {"nominal": 1.0, "mild": 0.75, "severe": 1.35}
-    controllers = ("static", "reactive", "predictive", "predictive_no_forecast")
+    scenarios = {
+        "nominal": (1.0, None),
+        "mild": (0.75, None),
+        "severe": (1.35, None),
+        "transfer_vmware": (1.0, "vmware"),
+        "transfer_hyperv": (1.0, "hyperv"),
+        "transfer_kubernetes": (1.0, "kubernetes"),
+    }
+    controllers = ("static", "reactive", "predictive", "predictive_no_forecast", "mpc")
     wall_start = time.perf_counter()
-    for scenario, severity in scenarios.items():
+    for scenario, (severity, platform_shift) in scenarios.items():
         for seed in range(args.seeds):
             for controller in controllers:
-                rows.append(simulate(seed, controller, scenario, severity))
+                rows.append(simulate(seed, controller, scenario, severity, platform_shift))
     elapsed = time.perf_counter() - wall_start
     args.output.mkdir(parents=True, exist_ok=True)
     with (args.output / "per_seed_results.csv").open("w", newline="") as handle:

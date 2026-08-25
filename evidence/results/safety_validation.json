@@ -1,0 +1,13 @@
+{
+  "unsafe_proposals": 684,
+  "unsafe_blocked": 684,
+  "safe_proposals": 316,
+  "safe_accepted": 316,
+  "exceptions": 82,
+  "unsafe_block_rate": 1.0,
+  "safe_accept_rate": 1.0,
+  "rollback_trials": 200,
+  "rollback_successes": 200,
+  "rollback_success_rate": 1.0,
+  "boundary": "MOCKED_COMMAND_RUNNER_FAULT_INJECTION_NOT_PRODUCTION_INFRASTRUCTURE"
+}
