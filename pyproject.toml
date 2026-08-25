@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-storage-qos"
+version = "0.1.0"
+description = "Predictive, safety-gated storage QoS optimization framework"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26,<3"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9"
+]
+validation = [
+  "scipy>=1.13,<2"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentic_storage_qos*"]

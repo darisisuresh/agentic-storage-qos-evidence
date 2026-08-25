@@ -3,7 +3,8 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-73e0ba)](https://darisisuresh.github.io/agentic-storage-qos-evidence/)
 [![AEGIS](https://img.shields.io/badge/AEGIS-2.4.0-ff6b3d)](https://github.com/sunilgentyala/aegis-integrity)
 [![Privacy](https://img.shields.io/badge/manuscript-private-071b1c)](#privacy-controls)
-![Tests](https://img.shields.io/badge/tests-129%20passed-73e0ba)
+![Framework tests](https://img.shields.io/badge/framework%20tests-8%20passed-73e0ba)
+![Validation](https://img.shields.io/badge/validation-100%20seeds-73e0ba)
 
 This repository contains sanitized, reproducible evidence supporting an IEEE-style manuscript about predictive, safety-constrained storage QoS optimization.
 
@@ -13,9 +14,11 @@ The manuscript and extracted text are intentionally excluded. Public artifacts c
 
 - Manuscript identity: SHA-256 only; no paper content is tracked.
 - AEGIS Integrity: v2.4.0, source commit `dfd6d15bb7adf6ca0e23ec70ac3dadaa2ae5304e`.
-- Tool validation: 129 upstream tests passed after installing the test-only `httpx2` dependency omitted from the package metadata.
+- Tool validation: 133 upstream tests passed with AEGIS v2.4.0 at source commit `dfd6d15bb7adf6ca0e23ec70ac3dadaa2ae5304e`.
 - Plagiarism: inconclusive because no independent comparison corpus was supplied.
-- AI/watermark analysis: unavailable; AEGIS terminated in its experimental watermark path after parsing the manuscript.
+- AI analysis: probabilistic score 0.13; this is a supporting signal, not proof of authorship.
+- Watermark analysis: experimental `NO_STATISTICAL_ANOMALY`; it did not affect overall risk.
+- Citation assessment: inconclusive despite verifying 11 of 15 references (73.3% coverage); one DOI lookup was rate-limited and three references have no DOI.
 - Formatting: US Letter; one-column title/abstract; two-column main body; duplex mirrored margins enabled in the proofread copy.
 
 Explore the public evidence experience at **[darisisuresh.github.io/agentic-storage-qos-evidence](https://darisisuresh.github.io/agentic-storage-qos-evidence/)**.
@@ -33,10 +36,25 @@ PAQO keeps learned recommendation separate from execution authority. The public 
 
 | Evidence | Result | Interpretation |
 |---|---:|---|
-| Mean P99 latency | 23.7% lower | Predictive vs. static QoS in the stated synthetic model |
-| P99 SLO violations | 46.3% fewer | Predictive vs. static QoS in the stated synthetic model |
-| AEGIS upstream tests | 129 passed | Tool suite validated locally |
+| Mean P99 latency | 29.47% lower | Predictive vs. static QoS; nominal scenario, 100 paired seeds |
+| P99 SLO violations | 93.87% fewer | Predictive vs. static QoS; nominal scenario, 100 paired seeds |
+| Mean queue depth | 89.76% lower | Predictive vs. static QoS; nominal scenario, 100 paired seeds |
+| Decision time | 19.50 μs | Mean predictive software decision time; excludes array actuation |
+| Framework tests | 8 passed | Unit and benchmark reproducibility checks |
+| AEGIS upstream tests | 133 passed | Tool suite validated locally |
 | Public manuscript files | 0 | Privacy control enforced |
+
+All performance values are from a transparent synthetic queueing model, not a production storage array. Independent seeds—not the 720 interval samples within each seed—are the experimental units.
+
+## Reproduce the validation
+
+```sh
+python -m pip install -e '.[dev,validation]'
+pytest -q
+python benchmarks/run_validation.py --seeds 100
+```
+
+The run writes per-seed observations and an aggregate statistical report to `evidence/results/`. The committed report includes two-sided 95% t confidence intervals, paired one-sided Wilcoxon tests, Cohen's dz, three stress levels, and a no-forecast ablation. On the recorded test host, all 1,200 controller-scenario runs completed in 19.12 seconds.
 
 ## Privacy controls
 
@@ -55,15 +73,16 @@ The companion manuscript remains private while under preparation. Use the reposi
 ```bibtex
 @misc{darisi2026paqo,
   title        = {{PAQO}: Agentic Storage QoS Optimization Using Predictive I/O Intelligence},
-  author       = {Darisi, Suresh Kumar},
+  author       = {Darisi, Suresh Kumar and Gentyala, Sunil},
   year         = {2026},
   howpublished = {GitHub repository},
   url          = {https://github.com/darisisuresh/agentic-storage-qos-evidence}
 }
 ```
 
-## Author
+## Authors
 
-**Suresh kumar Darisi** — Independent Researcher
+**Suresh Kumar Darisi** — Rocket Software Inc., Boston, Massachusetts, USA<br>
+**Sunil Gentyala** — HCLTech America Inc., Dallas, Texas, USA
 
 [GitHub](https://github.com/darisisuresh)

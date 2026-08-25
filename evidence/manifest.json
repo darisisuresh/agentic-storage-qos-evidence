@@ -1,20 +1,34 @@
 {
   "schema_version": "1.0",
-  "audit_date": "2026-08-12",
+  "audit_date": "2026-08-24",
   "manuscript": {
     "filename_committed": false,
     "content_committed": false,
-    "sha256_original": "0b0952d4a25c2dc7c893bef91acd1521835bb2cf4f5342a1bcb71cf24db49c66",
+    "sha256_original": "7f9089a2245b791432b01b2fd82d8a81d7ed6f2feefb352f584911e7baa539e7",
     "format": "Microsoft OOXML DOCX",
-    "size_bytes": 309545
+    "size_bytes": 333622
+  },
+  "performance_validation": {
+    "independent_seeds": 100,
+    "scenarios": ["mild", "nominal", "severe"],
+    "controller_variants": 4,
+    "intervals_per_seed": 720,
+    "framework_tests": "8 passed",
+    "nominal_predictive_vs_static_p99_reduction_pct": 29.47,
+    "nominal_predictive_vs_static_violation_reduction_pct": 93.87,
+    "nominal_predictive_vs_static_queue_reduction_pct": 89.76,
+    "boundary": "SYNTHETIC_MODEL_NOT_PRODUCTION_ARRAY"
   },
   "aegis": {
     "version": "2.4.0",
     "source_commit": "dfd6d15bb7adf6ca0e23ec70ac3dadaa2ae5304e",
-    "upstream_tests": "129 passed",
+    "upstream_tests": "133 passed",
+    "scan_date": "2026-08-24",
+    "overall_risk": "LOW",
     "plagiarism_assessment": "INCONCLUSIVE_NO_CORPUS",
-    "ai_assessment": "UNAVAILABLE_RUNTIME_TERMINATION",
-    "watermark_assessment": "UNAVAILABLE_RUNTIME_TERMINATION"
+    "ai_assessment": "PROBABILISTIC_SCORE_0.133",
+    "watermark_assessment": "EXPERIMENTAL_NO_STATISTICAL_ANOMALY_NON_RISK_BEARING",
+    "citation_assessment": "INCONCLUSIVE_11_OF_15_VERIFIED_ONE_RATE_LIMITED_THREE_NO_DOI"
   },
   "privacy": {
     "document_body_transmitted": false,
@@ -22,4 +36,3 @@
     "author_email_public": false
   }
 }
-
