@@ -1,20 +1,29 @@
 {
   "schema_version": "1.0",
-  "audit_date": "2026-08-24",
+  "audit_date": "2026-08-25",
   "manuscript": {
     "filename_committed": false,
     "content_committed": false,
-    "sha256_original": "9f81eac2c874881acdff7483222e2d94671d2f0e87f28005067028eaf10c449d",
+    "sha256_original": "5844dcc8431e6809848f22cd65a0b522ff11475ca2e2525c44576a66e43e2654",
     "format": "Microsoft OOXML DOCX",
-    "size_bytes": 167662,
-    "identity_role": "ICOSICS_972_CAMERA_READY_FINAL"
+    "size_bytes": 168017,
+    "identity_role": "I_SMAC_770_CAMERA_READY_FINAL"
   },
   "performance_validation": {
     "independent_seeds": 100,
     "scenarios": ["mild", "nominal", "severe", "transfer_vmware", "transfer_hyperv", "transfer_kubernetes"],
     "controller_variants": 5,
     "intervals_per_seed": 720,
-    "framework_tests": "11 passed",
+    "framework_tests": "14 passed",
+    "data_quality_validation": {
+      "traces_checked": 600,
+      "intervals_per_trace": 720,
+      "workloads_per_trace": 4,
+      "missing_or_nonfinite_values": 0,
+      "nonpositive_capacity_or_demand_values": 0,
+      "malformed_shapes": 0,
+      "duplicate_trace_hashes": 0
+    },
     "nominal_predictive_vs_static_p99_reduction_pct": 29.47,
     "nominal_predictive_vs_static_violation_reduction_pct": 93.87,
     "nominal_predictive_vs_static_queue_reduction_pct": 89.76,
@@ -31,12 +40,12 @@
     "version": "2.4.0",
     "source_commit": "dfd6d15bb7adf6ca0e23ec70ac3dadaa2ae5304e",
     "upstream_tests": "133 passed",
-    "scan_date": "2026-08-24",
+    "scan_date": "2026-08-25",
     "overall_risk": "LOW",
     "plagiarism_assessment": "INCONCLUSIVE_NO_CORPUS",
     "ai_assessment": "PROBABILISTIC_SCORE_0.138",
     "watermark_assessment": "EXPERIMENTAL_NO_STATISTICAL_ANOMALY_NON_RISK_BEARING",
-    "citation_assessment": "INCONCLUSIVE_10_OF_15_VERIFIED_TWO_RATE_LIMITED_THREE_NO_DOI_ZERO_FLAGGED"
+    "citation_assessment": "INCONCLUSIVE_11_OF_15_VERIFIED_ONE_UNAVAILABLE_THREE_NO_DOI_ZERO_MISMATCHES"
   },
   "privacy": {
     "document_body_transmitted": false,

@@ -15,3 +15,11 @@ def test_predictive_improves_tail_in_nominal_case():
     predictive = [simulate(seed, "predictive", "nominal", 1.0) for seed in range(5)]
     assert np.mean([r.p99_ms for r in predictive]) < np.mean([r.p99_ms for r in static])
     assert np.mean([r.violation_pct for r in predictive]) < np.mean([r.violation_pct for r in static])
+
+
+def test_platform_shift_changes_only_requested_platform_demand():
+    nominal, capacity = workload(7, 1.0)
+    shifted, shifted_capacity = workload(7, 1.0, platform_shift="vmware")
+    assert shifted[:, 0].mean() > nominal[:, 0].mean() * 1.12
+    assert np.array_equal(shifted[:, 1:], nominal[:, 1:])
+    assert np.array_equal(shifted_capacity, capacity)

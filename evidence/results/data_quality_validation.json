@@ -1,0 +1,19 @@
+{
+  "independent_seeds": 100,
+  "scenario_count": 6,
+  "total_traces": 600,
+  "intervals_per_trace": 720,
+  "workloads_per_trace": 4,
+  "platform_composition": {
+    "vmware": 1,
+    "hyperv": 1,
+    "kubernetes": 2
+  },
+  "missing_or_nonfinite_values": 0,
+  "nonpositive_demand_or_capacity_values": 0,
+  "malformed_shapes": 0,
+  "duplicate_trace_hashes": 0,
+  "learned_model_split": "NOT_APPLICABLE_NO_TRAINED_MODEL_IN_REPORTED_EVALUATION",
+  "classification_distribution": "NOT_APPLICABLE_NO_CLASSIFICATION_TASK",
+  "passed": true
+}
