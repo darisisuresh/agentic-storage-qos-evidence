@@ -4,17 +4,17 @@
   "manuscript": {
     "filename_committed": false,
     "content_committed": false,
-    "sha256_original": "0caf66ee8cf4adbf4f52b455305e65621c96b1dc8b07145e0e73e0159fdb4411",
+    "sha256_original": "b29c41cd7fab4d1c159cd57a9e766e8d5a62a7848521ee64cd936b93cf0128be",
     "format": "Microsoft OOXML DOCX",
-    "size_bytes": 139276,
-    "identity_role": "I_SMAC_770_CAMERA_READY_FINAL"
+    "size_bytes": 140324,
+    "identity_role": "I_SMAC_770_CAMERA_READY_FINAL_VERIFIED"
   },
   "performance_validation": {
     "independent_seeds": 100,
     "scenarios": ["mild", "nominal", "severe", "transfer_vmware", "transfer_hyperv", "transfer_kubernetes"],
     "controller_variants": 5,
     "intervals_per_seed": 720,
-    "framework_tests": "14 passed",
+    "framework_tests": "15 passed",
     "data_quality_validation": {
       "traces_checked": 600,
       "intervals_per_trace": 720,
@@ -26,7 +26,9 @@
     },
     "nominal_predictive_vs_static_p99_reduction_pct": 29.47,
     "nominal_predictive_vs_static_violation_reduction_pct": 93.87,
-    "nominal_predictive_vs_static_queue_reduction_pct": 89.76,
+    "nominal_predictive_vs_static_backlog_reduction_pct": 89.76,
+    "backlog_semantics": "DIMENSIONLESS_SYNTHETIC_INDEX_NOT_OUTSTANDING_IOS",
+    "tail_latency_semantics": "DETERMINISTIC_SURROGATES_NOT_EMPIRICAL_ORDER_STATISTICS",
     "nominal_predictive_vs_mpc_p99_reduction_pct": 7.85,
     "safety_fault_injection": {
       "unsafe_proposals_blocked": "684/684",
@@ -45,7 +47,7 @@
     "plagiarism_assessment": "INCONCLUSIVE_NO_CORPUS",
     "ai_assessment": "PROBABILISTIC_SCORE_0.138",
     "watermark_assessment": "EXPERIMENTAL_NO_STATISTICAL_ANOMALY_NON_RISK_BEARING",
-    "citation_assessment": "INCONCLUSIVE_11_OF_15_VERIFIED_ONE_UNAVAILABLE_THREE_NO_DOI_ZERO_MISMATCHES"
+    "citation_assessment": "12_OF_15_VERIFIED_THREE_NO_DOI_ZERO_FLAGS_ZERO_MISMATCHES"
   },
   "privacy": {
     "document_body_transmitted": false,

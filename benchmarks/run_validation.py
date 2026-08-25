@@ -23,6 +23,19 @@ BASE = np.array([5000.0, 4500.0, 3500.0, 4000.0])
 SLO = np.array([12.0, 18.0, 30.0, 15.0])
 BASE_LAT = np.array([3.2, 4.4, 6.5, 3.8])
 STATIC_LIMIT = np.full(4, 7000.0)
+MODEL_SPEC = {
+    "backlog_request_weight": 0.10,
+    "backlog_calibration_divisor": 110.0,
+    "backlog_min": 0.0,
+    "backlog_max": 240.0,
+    "backlog_latency_coefficient": 0.020,
+    "shared_utilization_coefficient": 2.0,
+    "shared_utilization_threshold": 0.74,
+    "workload_utilization_coefficient": 0.70,
+    "p95_tail_factor": 1.32,
+    "p99_tail_factor": 1.58,
+    "backlog_semantics": "DIMENSIONLESS_SYNTHETIC_INDEX_NOT_OUTSTANDING_IOS",
+}
 
 
 @dataclass
@@ -116,7 +129,9 @@ def decide(name: str, history: np.ndarray, limits: np.ndarray, p99: np.ndarray,
 def simulate(seed: int, controller: str, scenario: str, severity: float,
              platform_shift: str | None = None) -> RunResult:
     demand, capacity = workload(seed, severity, platform_shift=platform_shift)
-    queue = np.zeros(4)
+    # This calibrated state is a dimensionless synthetic backlog index.  It is
+    # retained as queue_depth in the public CSV for backward compatibility.
+    backlog = np.zeros(4)
     limits = STATIC_LIMIT.copy()
     cooldown = np.zeros(4)
     p99 = BASE_LAT * 1.55
@@ -128,18 +143,24 @@ def simulate(seed: int, controller: str, scenario: str, severity: float,
         limits, changed = decide(controller, demand, limits, p99, cooldown, t)
         decision_ns += time.perf_counter_ns() - start
         actions += changed
-        requested = np.minimum(demand[t] + 0.10 * queue, limits)
+        requested = np.minimum(demand[t] + MODEL_SPEC["backlog_request_weight"] * backlog, limits)
         scale = min(1.0, capacity[t] / max(np.sum(requested), 1.0))
         served = requested * scale
-        queue = np.clip(queue + (demand[t] - served) / 110.0, 0, 240)
+        backlog = np.clip(
+            backlog + (demand[t] - served) / MODEL_SPEC["backlog_calibration_divisor"],
+            MODEL_SPEC["backlog_min"], MODEL_SPEC["backlog_max"])
         utilization = np.sum(served) / capacity[t]
         own = served / np.maximum(limits, 1)
-        mean = BASE_LAT * (1 + 0.020 * queue + 2.0 * max(0, utilization - 0.74) ** 3 + 0.70 * own ** 3)
-        p95 = mean * 1.32
-        p99 = mean * 1.58
+        mean = BASE_LAT * (
+            1 + MODEL_SPEC["backlog_latency_coefficient"] * backlog
+            + MODEL_SPEC["shared_utilization_coefficient"]
+            * max(0, utilization - MODEL_SPEC["shared_utilization_threshold"]) ** 3
+            + MODEL_SPEC["workload_utilization_coefficient"] * own ** 3)
+        p95 = mean * MODEL_SPEC["p95_tail_factor"]
+        p99 = mean * MODEL_SPEC["p99_tail_factor"]
         satisfaction = np.minimum(1.0, SLO / np.maximum(p99, 1e-9))
         fairness = np.sum(satisfaction) ** 2 / (4 * np.sum(satisfaction ** 2))
-        records.append((p95.mean(), p99.mean(), (p99 > SLO).mean(), served.sum(), queue.mean(), fairness))
+        records.append((p95.mean(), p99.mean(), (p99 > SLO).mean(), served.sum(), backlog.mean(), fairness))
         cooldown -= 1
     values = np.asarray(records)
     means = values.mean(axis=0)
@@ -181,7 +202,8 @@ def summarize(rows: list[RunResult]) -> dict:
                 "cohens_dz": float(diff.mean() / diff.std(ddof=1)),
             }
     return {"design": {"independent_seeds": len({r.seed for r in rows}), "intervals_per_seed": 720,
-                       "interval_seconds": 10, "confidence_level": 0.95}, "summary": out, "paired_tests": paired}
+                       "interval_seconds": 10, "confidence_level": 0.95,
+                       "model_specification": MODEL_SPEC}, "summary": out, "paired_tests": paired}
 
 
 def main() -> None:
